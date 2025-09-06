@@ -1,8 +1,11 @@
 from django.db import models
+from .declaration import Declaration
+from .owner import Owner
+
 
 class Income(models.Model):
-    declaration_id = models.UUIDField()
-    owner_api_id = models.UUIDField()
+    declaration = models.ForeignKey(Declaration, on_delete=models.CASCADE, related_name='incomes')
+    owners = models.ManyToManyField(Owner, related_name='incomes')
     #
     object_type = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)

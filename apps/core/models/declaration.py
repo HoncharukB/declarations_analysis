@@ -1,8 +1,11 @@
 from django.db import models
+from .declarant import Declarant
+
 
 class Declaration(models.Model):
     document_id = models.UUIDField(primary_key=True)
-    user_declarant_id = models.PositiveIntegerField()
+    declarant = models.ForeignKey(Declarant, on_delete=models.CASCADE, related_name='declarations')
+
     declaration_year = models.PositiveSmallIntegerField()
     declaration_type = models.PositiveSmallIntegerField(
         choices=[

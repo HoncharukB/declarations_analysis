@@ -1,7 +1,8 @@
 from django.db import models
 
+
 class Declarant(models.Model):
-    user_declarant_id = models.PositiveIntegerField(unique=True) #повертається ціле додатнє число, тому не змінював на UUIDField
+    user_declarant_id = models.PositiveIntegerField(unique=True)
     api_id = models.UUIDField(unique=True, null=True, blank=True)
     #
     surname = models.CharField(max_length=100)

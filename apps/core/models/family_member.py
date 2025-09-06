@@ -1,8 +1,10 @@
 from django.db import models
+from .declaration import Declaration
+
 
 class FamilyMember(models.Model):
     api_id = models.UUIDField()
-    declaration_id = models.UUIDField()
+    declaration = models.ForeignKey(Declaration, on_delete=models.CASCADE, related_name='family_members')
     #
     relation_type = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)

@@ -1,8 +1,11 @@
 from django.db import models
+from .declaration import Declaration
+from .owner import Owner
+
 
 class Vehicle(models.Model):
-    declaration_id = models.UUIDField()
-    owner_api_id = models.UUIDField()
+    declaration = models.ForeignKey(Declaration, on_delete=models.CASCADE, related_name='vehicles')
+    owners = models.ManyToManyField(Owner, related_name='vehicles')
     #
     object_type = models.CharField(max_length=100)
     brand = models.CharField(max_length=100)
