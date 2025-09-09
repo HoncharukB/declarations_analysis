@@ -1,22 +1,22 @@
 from django.db import models
-from .declarant import Declarant
 
+
+class DeclarationType(models.IntegerChoices):
+    ANNUAL = 1, "Щорічна"
+    BEFORE_DISMISSAL = 2, "Перед звільненням"
+    AFTER_DISMISSAL = 3, "Після звільнення"
+    CANDIDATE = 4, "Кандидата на посаду"
 
 class Declaration(models.Model):
-    document_id = models.UUIDField(primary_key=True)
-    declarant = models.ForeignKey(Declarant, on_delete=models.CASCADE, related_name='declarations')
-
+    # Id
+    document_id = models.UUIDField()
+    # Звичайні поля
     declaration_year = models.PositiveSmallIntegerField()
-    declaration_type = models.PositiveSmallIntegerField(
-        choices=[
-            (1, "Щорічна"),
-            (2, "Перед звільненням"),
-            (3, "Після звільнення"),
-            (4, "Кандидата на посаду")
-        ]
-    )
+    declaration_type = models.PositiveSmallIntegerField(choices=DeclarationType.choices)
     date = models.DateField()
-    #
+    # Зв'язки
+    declarant = models.ForeignKey("Declarant", on_delete=models.CASCADE, related_name='declarations')
+    # Метадані
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

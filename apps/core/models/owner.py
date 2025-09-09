@@ -1,34 +1,35 @@
 from django.db import models
 
 
-class Owner(models.Model):
-    OWNER_TYPE_CHOICES = [
-        ('declarant', 'Декларант'),
-        ('family', 'Член сім’ї'),
-        ('person', 'Фізична особа (третя)'),
-        ('company', 'Юридична особа/компанія'),
-        ('state', 'Держава'),
-        ('other', 'Інше'),
-    ]
+class OwnerType(models.TextChoices):
+    DECLARANT = 'declarant', 'Декларант'
+    FAMILY = 'family', 'Член сім’ї'
+    PERSON = 'person', 'Фізична особа (третя)'
+    COMPANY = 'company', 'Юридична особа/компанія'
+    STATE = 'state', 'Держава'
+    OTHER = 'other', 'Інше'
 
-    owner_type = models.CharField(max_length=50, choices=OWNER_TYPE_CHOICES)
-    #
-    declarant = models.ForeignKey("Declarant", null=True, blank=True, on_delete=models.SET_NULL)
-    #
-    family_member = models.ForeignKey("FamilyMember", null=True, blank=True, on_delete=models.SET_NULL)
-    #
+class Owner(models.Model):
+    # Звичайні поля
+    owner_type = models.CharField(max_length=50, choices=OwnerType.choices)
     name = models.CharField(max_length=500, null=True, blank=True)
     identifier = models.CharField(max_length=150, null=True, blank=True)
+    # Зв'язки
+    declarant = models.ForeignKey("Declarant", on_delete=models.SET_NULL, null=True, blank=True)
+    family_member = models.ForeignKey("FamilyMember", on_delete=models.SET_NULL, null=True, blank=True)
+    # Метадані
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        if self.owner_type == "declarant" and self.declarant:
+        if self.owner_type == OwnerType.DECLARANT and self.declarant:
             return f"Декларант: {self.declarant}"
-        elif self.owner_type == "family" and self.family_member:
+        elif self.owner_type == OwnerType.FAMILY and self.family_member:
             return f"Член сім’ї: {self.family_member}"
-        elif self.owner_type == "company":
+        elif self.owner_type == OwnerType.COMPANY:
             return f"Компанія: {self.name}"
-        elif self.owner_type == "person":
+        elif self.owner_type == OwnerType.PERSON:
             return f"Фізична особа: {self.name or 'Невідомо'}"
-        elif self.owner_type == "state":
+        elif self.owner_type == OwnerType.STATE:
             return f"Держава: {self.name or 'Україна'}"
         return self.name or "Невідомий власник"
