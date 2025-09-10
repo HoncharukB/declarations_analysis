@@ -10,7 +10,7 @@ class Vehicle(models.Model):
     owning_date = models.DateField(null=True, blank=True)
     graduation_year = models.PositiveSmallIntegerField(null=True, blank=True)
     # Зв'язки
-    declaration = models.ForeignKey("Declaration", on_delete=models.CASCADE, related_name='vehicles')
+    declaration = models.ManyToManyField("Declaration", related_name='vehicles')
     owners = models.ManyToManyField("Owner", related_name='vehicles')
     # Метадані
     created_at = models.DateTimeField(auto_now_add=True)
