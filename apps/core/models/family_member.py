@@ -10,7 +10,7 @@ class FamilyMember(models.Model):
     name = models.CharField(max_length=100)
     patronymic = models.CharField(max_length=100, null=True, blank=True)
     # Зв'язки
-    declaration = models.ForeignKey("Declaration", on_delete=models.CASCADE, related_name='family_members')
+    declarations = models.ManyToManyField("Declaration", related_name='family_members')
     owner = models.OneToOneField("Owner", on_delete=models.CASCADE, related_name="family_member")
     # Метадані
     created_at = models.DateTimeField(auto_now_add=True)

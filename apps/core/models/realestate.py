@@ -1,9 +1,17 @@
 from django.db import models
 
 
+class RealEstateDeclaration(models.Model):
+    real_estate = models.ForeignKey("RealEstate", on_delete=models.CASCADE)
+    declaration = models.ForeignKey("Declaration", on_delete=models.CASCADE)
+    iteration = models.CharField(max_length=100)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["declaration", "iteration", "real_estate"], name="unique_real_estate_declarations_iteration")
+        ]
+
 class RealEstate(models.Model):
-    # Id
-    iteration = models.CharField(max_length=50)
     # Звичайні поля
     object_type = models.CharField(max_length=100)
     other_object_type = models.CharField(max_length=255, null=True, blank=True)
@@ -15,7 +23,7 @@ class RealEstate(models.Model):
     reg_number = models.CharField(max_length=100, null=True, blank=True)
     object_cost_type = models.CharField(max_length=100, null=True, blank=True)
     # Зв'язки
-    declaration = models.ForeignKey("Declaration", on_delete=models.CASCADE, related_name='real_estates')
+    declarations = models.ManyToManyField("Declaration", through='RealEstateDeclaration', related_name='real_estates')
     owners = models.ManyToManyField("Owner", related_name='real_estates')
     # Метадані
     created_at = models.DateTimeField(auto_now_add=True)
@@ -23,8 +31,3 @@ class RealEstate(models.Model):
 
     def __str__(self):
         return f"{self.object_type} in {self.city}, area {self.total_area} m²"
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['declaration', 'iteration'], name='unique_real_estate_iteration')
-        ]

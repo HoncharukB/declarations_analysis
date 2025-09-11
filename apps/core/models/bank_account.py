@@ -8,7 +8,7 @@ class BankAccount(models.Model):
     amount = models.PositiveBigIntegerField(null=True, blank=True)
     organization = models.CharField(max_length=255, null=True, blank=True)
     # Зв'язки
-    declaration = models.ManyToManyField("Declaration", related_name='bank_accounts')
+    declarations = models.ManyToManyField("Declaration", related_name='bank_accounts')
     owners = models.ManyToManyField("Owner", related_name='bank_accounts')
     # Метадані
     created_at = models.DateTimeField(auto_now_add=True)

@@ -8,7 +8,7 @@ class Income(models.Model):
     source = models.CharField(max_length=255, null=True, blank=True)
     sources = models.JSONField(null=True, blank=True)
     # Зв'язки
-    declaration = models.ManyToManyField("Declaration", related_name='incomes')
+    declarations = models.ManyToManyField("Declaration", related_name='incomes')
     owners = models.ManyToManyField("Owner", related_name='incomes')
     # Метадані
     created_at = models.DateTimeField(auto_now_add=True)
