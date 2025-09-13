@@ -18,4 +18,5 @@ class Declarant(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.surname} {self.name} {self.patronymic or ""} \n{self.work_place} {self.work_post}'
+        return (f'Surname: {self.surname}\nName: {self.name}\nPatronymic: {self.patronymic or ""}'
+                f'\nWork place: {self.work_place}\nWork post: {self.work_post}')
