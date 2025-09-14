@@ -1,31 +1,33 @@
+import random
 import unittest
 import uuid
 from datetime import date
 from apps.core.models import BankAccount, Declaration, Declarant, Owner
-from apps.core.models.owner import OwnerType
+from apps.core.models.owner import OwnerType, CitizenType
 
 class BankAccountModelTests(unittest.TestCase):
-    id_counter = 50
-
     def setUp(self):
-        BankAccountModelTests.id_counter += 1
-
+        user_declarant_id = random.randint(1, 2 ** 63 - 1)
         self.owner1_data = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner One',
+            'first_name': 'Owner',
+            'last_name': 'One',
             'identifier': uuid.uuid4().hex,
+            'citizen': CitizenType.UKRAINIAN_CITIZEN,
         }
         self.owner1 = Owner.objects.create(**self.owner1_data)
 
         self.owner2_data = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner Two',
+            'first_name': 'Owner',
+            'last_name': 'Two',
             'identifier': uuid.uuid4().hex,
+            'citizen': CitizenType.UKRAINIAN_CITIZEN,
         }
         self.owner2 = Owner.objects.create(**self.owner2_data)
 
         self.declarant_data = {
-            'user_declarant_id': BankAccountModelTests.id_counter,
+            'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
             'surname': 'Petrenko',
             'name': 'Vasyl',
@@ -58,12 +60,20 @@ class BankAccountModelTests(unittest.TestCase):
             'currency': 'USD',
             'amount': 8654,
             'organization': 'Bank Handlowy w Warszawie S.A.',
+            'organization_type': 'Юридична особа, зареєстрована в Україні',
+            'organization_ua_company_code': '14360570',
+            'iteration': '12345',
+            'extra_info': {'notes': 'Some extra info'},
         }
         self.bank_account_data_2 = {
             'object_type': 'Кошти, розміщені на банківських рахунках',
             'currency': 'EUR',
             'amount': 6800,
-            'organization': 'Bank Handlowy w Warszawie S.A.',
+            'organization': '[Конфіденційна інформація]',
+            'organization_type': 'Юридична особа, зареєстрована в Україні',
+            'organization_ua_company_code': '21111111',
+            'iteration': '67890',
+            'extra_info': {'notes': 'Other info'},
         }
         self.bank_account1 = BankAccount.objects.create(**self.bank_account_data_1)
         self.bank_account2 = BankAccount.objects.create(**self.bank_account_data_2)
@@ -85,6 +95,7 @@ class BankAccountModelTests(unittest.TestCase):
         self.assertIn(self.owner1.id, ba1.owners.values_list('id', flat=True))
 
         self.assertEqual(ba2.amount, 6800)
+        self.assertIsNone(ba2.organization)  # Перевірка, що конфіденційна інформація очищена
         self.assertIn(self.declaration_2.id, ba2.declarations.values_list('id', flat=True))
         self.assertIn(self.owner2.id, ba2.owners.values_list('id', flat=True))
 

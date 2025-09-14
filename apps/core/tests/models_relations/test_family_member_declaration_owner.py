@@ -1,3 +1,4 @@
+import random
 import unittest
 import uuid
 from datetime import date
@@ -5,22 +6,20 @@ from apps.core.models import FamilyMember, Declaration, Declarant, Owner
 from apps.core.models.owner import OwnerType
 
 class FamilyMemberModelTests(unittest.TestCase):
-    id_counter = 50
-
     def setUp(self):
-        FamilyMemberModelTests.id_counter += 1
-
+        user_declarant_id = random.randint(1, 2 ** 63 - 1)
         # Створюємо власника з типом family
         self.owner_data = {
             'owner_type': OwnerType.FAMILY,
-            'name': 'Family Member Owner',
+            'first_name': 'Family',
+            'last_name': 'MemberOwner',
             'identifier': uuid.uuid4().hex,
         }
         self.owner = Owner.objects.create(**self.owner_data)
 
         # Створюємо декларанта
         self.declarant_data = {
-            'user_declarant_id': FamilyMemberModelTests.id_counter,
+            'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
             'surname': 'Petrenko',
             'name': 'Vasyl',
@@ -51,12 +50,14 @@ class FamilyMemberModelTests(unittest.TestCase):
 
         # Створюємо FamilyMember з посиланням на owner та declarations
         self.family_member_data = {
-            'api_id' : uuid.uuid4(),
-            'relation_type' : 'sibling',
-            'surname' : 'Ivanov',
-            'name' : 'Ivan',
-            'patronymic' : 'Ivanovich',
-            'owner' : self.owner,
+            'api_id': uuid.uuid4(),
+            'subjectRelation': 'рідний брат',
+            'surname': 'Ivanov',
+            'name': 'Ivan',
+            'patronymic': 'Ivanovich',
+            'region': 'Kyiv',
+            'city': 'Kyiv',
+            'owner': self.owner,
         }
         self.family_member = FamilyMember.objects.create(**self.family_member_data)
 

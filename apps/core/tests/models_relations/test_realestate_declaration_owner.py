@@ -1,3 +1,4 @@
+import random
 import unittest
 import uuid
 from decimal import Decimal
@@ -8,29 +9,28 @@ from apps.core.models.owner import OwnerType
 
 
 class RealEstateModelTests(unittest.TestCase):
-    id_counter = 50
-
     def setUp(self):
-        RealEstateModelTests.id_counter += 1
-
+        user_declarant_id = random.randint(1, 2 ** 63 - 1)
         # Створюємо власників
         self.owner_data_1 = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner One',
+            'first_name': 'Owner',
+            'last_name': 'One',
             'identifier': uuid.uuid4().hex,
         }
         self.owner1 = Owner.objects.create(**self.owner_data_1)
 
         self.owner_data_2 = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner Two',
+            'first_name': 'Owner',
+            'last_name': 'Two',
             'identifier': uuid.uuid4().hex,
         }
         self.owner2 = Owner.objects.create(**self.owner_data_2)
 
         # Створюємо декларанта
         self.declarant_data = {
-            'user_declarant_id': RealEstateModelTests.id_counter,
+            'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
             'surname': 'Petrenko',
             'name': 'Vasyl',
@@ -61,26 +61,24 @@ class RealEstateModelTests(unittest.TestCase):
 
         # Створюємо обʼєкти RealEstate
         self.real_estate_data_1 = {
-            'object_type': 'Apartment',
-            'other_object_type': None,
+            'object_type': 'Квартира',
+            'actual_country': None,
             'region': 'Kyivska',
             'city': 'Kyiv',
             'total_area': Decimal('85.5'),
-            'cost_date_assessment': Decimal('1200000'),
-            'owning_date': date(2015, 5, 10),
-            'reg_number': 'REG123',
-            'object_cost_type': 'Market',
+            'cost_date_assessment': None,
+            'owning_date': None,
+            'ownerShip': None,
         }
         self.real_estate_data_2 = {
-            'object_type': 'House',
-            'other_object_type': 'Detached',
+            'object_type': 'Житловий будинок',
+            'actual_country': None,
             'region': 'Lvivska',
             'city': 'Lviv',
             'total_area': Decimal('150.0'),
-            'cost_date_assessment': Decimal('3500000'),
-            'owning_date': date(2010, 9, 20),
-            'reg_number': 'REG456',
-            'object_cost_type': 'Market',
+            'cost_date_assessment': None,
+            'owning_date': None,
+            'ownerShip': None,
         }
         self.real_estate1 = RealEstate.objects.create(**self.real_estate_data_1)
         self.real_estate2 = RealEstate.objects.create(**self.real_estate_data_2)

@@ -1,24 +1,26 @@
 import datetime
+import random
 import unittest
 import uuid
-from apps.core.models import Declaration, Declarant
-from apps.core.models.owner import Owner, OwnerType
+from apps.core.models import Declaration, Declarant, Owner
+from apps.core.models.owner import OwnerType, CitizenType
 
 class DeclarationModelTests(unittest.TestCase):
-    id_counter = 50
     def setUp(self):
-        DeclarationModelTests.id_counter += 1
+        user_declarant_id = random.randint(1, 2 ** 63 - 1)
         # Спершу створення Owner - необхідний для Declarant
         self.owner_data = {
             'owner_type': OwnerType.DECLARANT,
-            'name': 'Vasyl Petrenko',
+            'first_name': 'Vasyl',
+            'last_name': 'Petrenko',
             'identifier': uuid.uuid4().hex,
+            'citizen': CitizenType.UKRAINIAN_CITIZEN,
         }
         self.owner = Owner.objects.create(**self.owner_data)
 
         # Створення Declarant
         self.declarant_data = {
-            'user_declarant_id': DeclarationModelTests.id_counter,
+            'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
             'surname': 'Petrenko',
             'name': 'Vasyl',

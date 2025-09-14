@@ -1,32 +1,32 @@
+import random
 import unittest
 import uuid
 from datetime import date
-from decimal import Decimal
 from apps.core.models import Vehicle, Declaration, Declarant, Owner
 from apps.core.models.owner import OwnerType
 
 class VehicleModelTests(unittest.TestCase):
-    id_counter = 50
-
     def setUp(self):
-        VehicleModelTests.id_counter += 1
+        user_declarant_id = random.randint(1, 2 ** 63 - 1)
 
         self.owner1_data = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner One',
+            'first_name': 'Owner',
+            'last_name': 'One',
             'identifier': uuid.uuid4().hex,
         }
         self.owner1 = Owner.objects.create(**self.owner1_data)
 
         self.owner2_data = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner Two',
+            'first_name': 'Owner',
+            'last_name': 'Two',
             'identifier': uuid.uuid4().hex,
         }
         self.owner2 = Owner.objects.create(**self.owner2_data)
 
         self.declarant_data = {
-            'user_declarant_id': VehicleModelTests.id_counter,
+            'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
             'surname': 'Petrenko',
             'name': 'Vasyl',
@@ -51,25 +51,30 @@ class VehicleModelTests(unittest.TestCase):
             'date': date.today(),
             'declarant': self.declarant,
         }
-
         self.declaration_1 = Declaration.objects.create(**self.declaration_data_1)
         self.declaration_2 = Declaration.objects.create(**self.declaration_data_2)
 
         self.vehicle_data_1 = {
-            'object_type': 'Car',
+            'iteration': 'iter1',
+            'object_type': 'Автомобіль легковий',
             'brand': 'Toyota',
             'model': 'Camry',
-            'cost': Decimal('15000.00'),
-            'owning_date': date(2018, 5, 20),
-            'graduation_year': 2017,
+            'graduation_year': 2018,
+            'cost_date': '2020-01-01',
+            'owning_date': '2020-02-01',
+            'ownerShip': 'Власність',
+            'otherOwnership': '',
         }
         self.vehicle_data_2 = {
-            'object_type': 'Motorcycle',
+            'iteration': 'iter2',
+            'object_type': 'Мотоцикл',
             'brand': 'Honda',
             'model': 'CBR500R',
-            'cost': Decimal('7000.00'),
-            'owning_date': date(2020, 7, 10),
             'graduation_year': 2019,
+            'cost_date': '2022-01-01',
+            'owning_date': '2022-02-01',
+            'ownerShip': 'Інше право користування',
+            'otherOwnership': 'Оренда з правом викупу',
         }
 
         self.vehicle1 = Vehicle.objects.create(**self.vehicle_data_1)
@@ -98,10 +103,10 @@ class VehicleModelTests(unittest.TestCase):
         self.assertIn(self.owner2.id, v2.owners.values_list('id', flat=True))
 
     def test_update_vehicle(self):
-        self.vehicle1.cost = Decimal('16000.00')
+        self.vehicle1.gradation_year = 2018
         self.vehicle1.save()
         updated = Vehicle.objects.get(id=self.vehicle1.id)
-        self.assertEqual(updated.cost, Decimal('16000.00'))
+        self.assertEqual(updated.graduation_year, 2018)
 
     def test_delete_vehicle(self):
         v2_id = self.vehicle2.id

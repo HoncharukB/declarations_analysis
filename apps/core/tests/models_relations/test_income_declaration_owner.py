@@ -1,3 +1,4 @@
+import random
 import unittest
 import uuid
 from decimal import Decimal
@@ -6,28 +7,28 @@ from apps.core.models import Income, Declaration, Declarant, Owner
 from apps.core.models.owner import OwnerType
 
 class IncomeModelTests(unittest.TestCase):
-    id_counter = 50
-
     def setUp(self):
-        IncomeModelTests.id_counter += 1
+        user_declarant_id = random.randint(1, 2 ** 63 - 1)
         # Створюємо Owners
         self.owner_data_1 = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner One',
+            'first_name': 'Owner',
+            'last_name': 'One',
             'identifier': uuid.uuid4().hex,
         }
         self.owner1 = Owner.objects.create(**self.owner_data_1)
 
         self.owner_data_2 = {
             'owner_type': OwnerType.PERSON,
-            'name': 'Owner Two',
+            'first_name': 'Owner',
+            'last_name': 'Two',
             'identifier': uuid.uuid4().hex,
         }
         self.owner2 = Owner.objects.create(**self.owner_data_2)
 
         # Створюємо Declarant і декларації
         self.declarant_data = {
-            'user_declarant_id': IncomeModelTests.id_counter,
+            'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
             'surname': 'Petrenko',
             'name': 'Vasyl',
@@ -60,14 +61,22 @@ class IncomeModelTests(unittest.TestCase):
         self.income_data_1 = {
             'object_type': 'Salary',
             'amount': Decimal('5500.00'),
-            'source': 'IT Company',
-            'sources': {'primary': 'IT Company'},
+            'source_ua_company_name' : 'IT Company',
+            'income_source' : 'j',
+            'source_citizen' : 'Юридична особа, зареєстрована в Україні',
+            'source_ua_company_code' : '123456',
+            'iteration' : '12345',
+            'extra_info' : {'notes': 'Important client'},
         }
         self.income_data_2 = {
             'object_type': 'Bonus',
             'amount': Decimal('4500.00'),
-            'source': 'My company',
-            'sources': {'primary': 'My company'},
+            'source_ua_company_name' : '[Конфіденційна інформація]',
+            'income_source' : 'k',
+            'source_citizen' : 'Фізична особа',
+            'source_ua_company_code' : '654321',
+            'iteration' : '67890',
+            'extra_info' : {'notes': 'Secret bonus'},
         }
 
         self.income1 = Income.objects.create(**self.income_data_1)
@@ -89,6 +98,8 @@ class IncomeModelTests(unittest.TestCase):
         self.assertIn(self.owner1.id, income1.owners.values_list('id', flat=True))
         self.assertIn(self.declaration_2.id, income2.declarations.values_list('id', flat=True))
         self.assertIn(self.owner2.id, income2.owners.values_list('id', flat=True))
+        # Перевірка очистки конфіденційної інформації
+        self.assertIsNone(income2.source_ua_company_name)
 
     def test_update_income(self):
         self.income1.object_type = 'Consulting'

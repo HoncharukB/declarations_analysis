@@ -1,35 +1,37 @@
+import random
 import unittest
 import uuid
 from apps.core.models import Declarant, Owner
-from apps.core.models.owner import OwnerType
+from apps.core.models.owner import OwnerType, CitizenType
 
 
 # Test Case - Набір тестів
 class DeclarantModelTest(unittest.TestCase):
-    id_counter = 50
     # Pre Condition Запускається перед кожним тестом
     # Створення тестового клієнта перед кожним тестом
     def setUp(self):
-        DeclarantModelTest.id_counter += 1
+        user_declarant_id = random.randint(1, 2 ** 63 - 1)
         self.owner_data = {
             'owner_type': OwnerType.DECLARANT,
-            'name': 'Vasyl Petrenko',
+            'first_name': 'Vasyl',
+            'last_name': 'Petrenko',
             'identifier': uuid.uuid4().hex,
+            'citizen': CitizenType.UKRAINIAN_CITIZEN,
         }
         self.owner = Owner.objects.create(**self.owner_data)
 
-        self.declarant_data={
-            'user_declarant_id': DeclarantModelTest.id_counter,
+        self.declarant_data = {
+            'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
-            'surname':'Petrenko',
-            'name':'Vasyl',
-            'patronymic':'Ivanovich',
-            'work_place':'IT Step',
-            'work_post':'Developer',
+            'surname': 'Petrenko',
+            'name': 'Vasyl',
+            'patronymic': 'Ivanovich',
+            'work_place': 'IT Step',
+            'work_post': 'Developer',
             'owner': self.owner,
         }
         # Створення об'єкту, запис об'єкта в таблицю бази даних, присвоєння id об'єкту
-        self.declarant=Declarant.objects.create(**self.declarant_data)
+        self.declarant = Declarant.objects.create(**self.declarant_data)
 
     # Test - Метод - Окремий тест
     # Перевірка чи вірно створився декларант в таблиці
