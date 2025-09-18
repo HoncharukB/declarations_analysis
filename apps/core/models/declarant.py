@@ -2,8 +2,8 @@ from django.db import models
 
 
 class CountryDeclarant(models.IntegerChoices):
-    UKRAINE = 1, "Україна"
     NOT_REGISTERED = -1, "Не зареєстрований"
+    UKRAINE = 1, "Україна"
     AUSTRALIA = 2, "Австралія"
     AUSTRIA = 3, "Австрія"
     AZERBAIJAN = 4, "Азербайджан"
@@ -252,6 +252,7 @@ class CountryDeclarant(models.IntegerChoices):
     JAPAN = 248, "Японія"
 
 class ResponsiblePositionType(models.TextChoices):
+    NO_RESPONSIBLE_POSITION = ("Ні", "Ні")
     PRESIDENT_QUEEN_MINISTERS = (
         "Президент України, Прем’єр-міністр України, член Кабінету Міністрів України, перший заступник або заступник міністра",
         "Президент України, Прем’єр-міністр України, член Кабінету Міністрів України, перший заступник або заступник міністра"
@@ -356,9 +357,9 @@ class ResponsiblePositionType(models.TextChoices):
         "Голова та інші члени Рахункової палати, Секретар Рахункової палати та його заступник",
         "Голова та інші члени Рахункової палати, Секретар Рахункової палати та його заступник"
     )
-    NO_RESPONSIBLE_POSITION = ("Ні", "Ні")
 
 class CorruptionAffectedType(models.TextChoices):
+    NO_CORRUPTION_AFFECTED = ("Ні", "Ні")
     HEAD_OF_VR_SECRETARIAT = (
         "Керівник секретаріату Верховної Ради України та його заступник (за умови належності такої посади до патронатної служби та виконання організаційно-розпорядчих чи адміністративно-господарських функцій)",
         "Керівник секретаріату Верховної Ради України та його заступник (за умови належності такої посади до патронатної служби та виконання організаційно-розпорядчих чи адміністративно-господарських функцій)"
@@ -419,9 +420,9 @@ class CorruptionAffectedType(models.TextChoices):
         "Керівник, заступник керівника ТЦК та СП АР Крим, області, м. Києва та м. Севастополя та керівник районного (об’єднаного районного) ТЦК та СП",
         "Керівник, заступник керівника ТЦК та СП АР Крим, області, м. Києва та м. Севастополя та керівник районного (об’єднаного районного) ТЦК та СП"
     )
-    NO_CORRUPTION_AFFECTED = ("Ні", "Ні")
 
 class PublicPersonType(models.TextChoices):
+    NO_PUBLIC_PERSON = ("Ні", "Ні")
     PRESIDENT_AND_CABINET = (
         "Президент України, Прем’єр-міністр України, члени Кабінету Міністрів України та їх заступники",
         "Президент України, Прем’єр-міністр України, члени Кабінету Міністрів України та їх заступники"
@@ -510,12 +511,11 @@ class PublicPersonType(models.TextChoices):
         "Члени керівних органів політичних партій",
         "Члени керівних органів політичних партій"
     )
-    NO_PUBLIC_PERSON = ("Ні", "Ні")
 
 class Declarant(models.Model):
     # Id
-    user_declarant_id = models.PositiveBigIntegerField(unique=True)
-    api_id = models.UUIDField(unique=True, null=True, blank=True)
+    user_declarant_id = models.PositiveBigIntegerField(null=True, blank=True)
+    api_id = models.UUIDField(null=True, blank=True)
     # Звичайні поля
     surname = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
@@ -523,27 +523,15 @@ class Declarant(models.Model):
     work_place = models.CharField(max_length=255, null=True, blank=True)
     work_post = models.CharField(max_length=255, null=True, blank=True)
     responsible_position = models.CharField(choices=ResponsiblePositionType.choices, max_length=550, null=True, blank=True)
-    corruptionAffected = models.CharField(choices=CorruptionAffectedType.choices, max_length=550, null=True, blank=True)
+    corruption_affected = models.CharField(choices=CorruptionAffectedType.choices, max_length=550, null=True, blank=True)
     public_person = models.CharField(choices=PublicPersonType.choices, max_length=550, null=True, blank=True)
     actual_country = models.PositiveSmallIntegerField(choices=CountryDeclarant.choices, null=True, blank=True)
     region = models.CharField(max_length=255, null=True, blank=True)
     # Зв'язки
-    owner = models.OneToOneField("Owner", on_delete=models.CASCADE, related_name="declarant")
+    owner = models.OneToOneField("Owner", on_delete=models.CASCADE, related_name="declarant", null=True, blank=True)
     # Метадані
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def clean_confidential(self):
-        # Фільтрація полів, що можуть містити конфіденційну інформацію
-        fields_to_check = ['surname', 'name', 'patronymic', 'work_place', 'work_post', 'region']
-        for field in fields_to_check:
-            val = getattr(self, field)
-            if val and '[Конфіденційна інформація]' in val:
-                setattr(self, field, None)
-
-    def save(self, *args, **kwargs):
-        self.clean_confidential()
-        super().save(*args, **kwargs)
 
     def __str__(self):
         parts = [
@@ -553,7 +541,7 @@ class Declarant(models.Model):
             f"Країна: {self.get_actual_country_display() if hasattr(self, 'get_actual_country_display') and self.actual_country else 'не вказано'}",
             f"Регіон: {self.region or 'не вказано'}",
             f"Займає таке відповідальне та особливо відповідальне становище: {self.get_responsible_position_display() if hasattr(self, 'get_responsible_position_display') and self.responsible_position else 'не вказано'}",
-            f"Посада, пов'язана з високим рівнем корупційних ризиків: {self.get_corruptionAffected_display() if hasattr(self, 'get_corruptionAffected_display') and self.corruptionAffected else 'не вказано'}",
+            f"Посада, пов'язана з високим рівнем корупційних ризиків: {self.get_corruption_affected_display() if hasattr(self, 'get_corruption_affected_display') and self.corruption_affected else 'не вказано'}",
             f"Відноситься до національних публічних діячів: {self.get_public_person_display() if hasattr(self, 'get_public_person_display') and self.public_person else 'Ні'}"
         ]
         return "\n".join(parts)

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Declarant Detail{% endblock %}
+{% block content %}
+    <div>
+        <form method="post" enctype="multipart/form-data" id="declarant-detail-form">
+            {% csrf_token %}
+            {{ declarant_form.as_table }}
+            <button type="submit" name="submit_declarant">Save</button>
+        </form>
+    </div>
+{% endblock content %}

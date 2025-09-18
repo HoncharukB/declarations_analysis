@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Declarants{% endblock %}
+{% block content %}
+<div class="declarants-container">
+    <form action="{% url 'declarants' %}" method="post" class="declarant-form">
+        {% csrf_token %}
+        <h3>Особисті дані</h3>
+        <div class="form-row">
+            <input type="text" name="surname" placeholder="Прізвище" required>
+            <input type="text" name="name" placeholder="Ім'я" required>
+            <input type="text" name="patronymic" placeholder="По батькові" required>
+        </div>
+        <h3>Місце фактичного проживання</h3>
+        <div class="form-row">
+            <select name="actual_country" id="actual_country" required>
+                <option value="" disabled selected>Оберіть країну</option>
+                {% for actual_country in actual_country_choices %}
+                <option value="{{ actual_country.value }}">{{ actual_country.label }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="region" placeholder="Населений пункт" required>
+        </div>
+        <h3>Інформація про місце роботи або проходження служби (або місце майбутньої роботи чи проходження служби для кандидатів) і посаду,
+            у зв’язку з якою виник обов’язок подати декларацію (або посада, на яку претендуєте як кандидат)</h3>
+        <div class="form-row">
+            <input type="text" name="work_place" placeholder="Місце роботи" required>
+            <input type="text" name="work_post" placeholder="Займана посада" required>
+        </div>
+        <div class="form-row">
+            <h4>Чи належите Ви до службових осіб, які займають відповідальне та особливо відповідальне становище,
+                відповідно до Закону України «Про запобігання корупції»?</h4>
+            <select name="responsible_position" id="responsible_position" required>
+                <option value="" disabled selected>Оберіть становище</option>
+                {% for responsible_position in responsible_position_choices %}
+                <option value="{{ responsible_position.value }}">{{ responsible_position.label }}</option>
+                {% endfor %}
+            </select>
+            <h4>Чи належить Ваша посада до посад, пов'язаних з високим рівнем корупційних ризиків, згідно з
+                переліком, затвердженим Національним агентством з питань запобігання корупції?</h4>
+            <select name="corruption_affected" id="corruption_affected" required>
+                <option value="" disabled selected>Оберіть посаду</option>
+                {% for corruption_affected in corruption_affected_choices %}
+                <option value="{{ corruption_affected.value }}">{{ corruption_affected.label }}</option>
+                {% endfor %}
+            </select>
+            <h4>Чи відноситесь Ви до національних публічних діячів відповідно до Закону України "Про запобігання та
+                протидію легалізації (відмиванню) доходів, одержаних злочинним шляхом,
+                фінансуванню тероризму та фінансуванню розповсюдження зброї масового знищення"?</h4>
+            <select name="public_person" id="public_person" required>
+                <option value="" disabled selected>Оберіть статус</option>
+                {% for public_person in public_person_choices %}
+                <option value="{{ public_person.value }}">{{ public_person.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn submit-btn">
+            💾 Зберегти
+        </button>
+    </form>
+    <div class="table-wrapper">
+        {#Table#}
+        <table class="declarants-table">
+            <thead>
+                <tr>
+                    <th>Прізвище</th>
+                    <th>Ім'я</th>
+                    <th>По батькові</th>
+                    <th>Найменування місця роботи або проходження служби (або місця майбутньої роботи чи проходження служби
+                        для кандидатів)
+                    </th>
+                    <th>Займана посада (або посада, на яку претендуєте як кандидат)</th>
+                    <th>Населений пункт</th>
+                    <th>Країна</th>
+                    <th>Відповідальне становище</th>
+                    <th>Посада з високим корупційним ризиком</th>
+                    <th colspan="2">Національний публічний діяч</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for declarant in declarants_list %}
+                <tr>
+                    <td class="shrink-to-fit">{{ declarant.surname }}</td>
+                    <td class="shrink-to-fit">{{ declarant.name }}</td>
+                    <td class="shrink-to-fit">{{ declarant.patronymic }}</td>
+                    <td> {{ declarant.work_place }}</td>
+                    <td> {{ declarant.work_post }}</td>
+                    <td class="shrink-to-fit">{{ declarant.region }}</td>
+                    <td class="shrink-to-fit">{{ declarant.get_actual_country_display }}</td>
+                    <td>{{ declarant.get_responsible_position_display }}</td>
+                    <td>{{ declarant.get_corruption_affected_display }}</td>
+                    <td>{{ declarant.get_public_person_display }}</td>
+                    <td>
+                        <a href="{% url 'declarant_detail' declarant.id %}" class="details-link">⋮</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11" class="no-data">Декларанти не знайдені</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -2,6 +2,7 @@
 html, body {
     height: 100%;
     margin: 0;
+    overflow-x: hidden;
 }
 
 main {
@@ -14,6 +15,10 @@ body {
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #1f4037, #99f2c8);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: #ffffff;
 }
 
@@ -42,7 +47,7 @@ main p, .about-project p {
     max-width: 1000px;
 }
 
-/* HEADER */
+/********************************** HEADER **********************************/
 header {
     background: linear-gradient(90deg, #134E5E, #71B280);
     padding: 15px 30px;
@@ -73,7 +78,7 @@ header a:hover {
     color: #ffe57f;
 }
 
-/* FOOTER */
+/***************************** FOOTER ********************************/
 footer {
     background: linear-gradient(90deg, #134E5E, #71B280);
     color: #e0f7fa;
@@ -91,7 +96,7 @@ footer p {
     max-width: none;
     line-height: normal;
 }
-
+/*********************************************************************/
 /* Вітальна сторінка */
 .welcome {
     max-width: 1000px;
@@ -132,4 +137,222 @@ footer p {
 
 .btn:hover {
     background: linear-gradient(45deg, #134e5e, #71b280);
+}
+
+
+/***********************************Стилі для declarants.html********************************/
+/* Контейнер */
+.declarants-container {
+    max-width: 1600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(190,210,255,0.5);
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+}
+
+/* Форма */
+.declarant-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    align-items: center;
+}
+
+/* Блокові заголовки */
+.declarant-form h3 {
+    color: yellow;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* Внутрішні заголовки */
+.declarant-form h4 {
+    color: black;
+    font-size: 1rem;
+    text-align: center;
+    margin: 0.5rem 0;
+    width: 100%;
+}
+
+/* Формові рядки */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Інпут і селектор загальні */
+.declarant-form input,
+.declarant-form select {
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: rgba(255,255,255,0.9);
+    color: #333;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* однакова ширина */
+.declarant-form input[name="region"],
+.declarant-form select[name="actual_country"] {
+    flex: 1 1 48%;
+    max-width: 48%;
+}
+
+.declarant-form input[name="work_place"],
+.declarant-form input[name="work_post"] {
+    flex: 1 1 48%;
+    max-width: 48%;
+}
+
+.declarant-form input[name="surname"],
+.declarant-form input[name="name"],
+.declarant-form input[name="patronymic"] {
+    flex: 1 1 33%;
+    max-width: 31.5%;
+}
+
+.declarant-form select:not([name="actual_country"]) {
+    flex: 1 1 100%;
+    max-width: 97%;
+}
+
+.declarant-form select {
+    width: 100%;
+    max-width: 300px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+    background-size: 12px;
+    white-space: normal;
+    word-wrap: break;
+}
+
+.declarant-form select option {
+    font-size: 0.75rem;
+}
+
+/* Кнопка */
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem auto 0 auto;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    background: linear-gradient(to bottom, #0066cc 0%, #66ccff 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.submit-btn i {
+    font-size: 18px;
+    color: yellow;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(to bottom, #009999 0%, #00ff99 100%);
+    transform: scale(1.05);
+}
+
+
+/* Таблиця */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(210, 210, 210, 1);
+    padding: 1rem;
+}
+
+/* Основна таблиця */
+.declarants-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    font-size: 14px;
+    background: transparent;
+    color: #e0f7fa;
+}
+
+/* Заголовки таблиці */
+.declarants-table thead th {
+    background: linear-gradient(90deg, #4a90e2, #b3d1ff);
+    color: #0c1e3a;
+    padding: 12px 15px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 0;
+    box-shadow: 0 3px 7px rgba(74, 144, 226, 0.7);
+    user-select: none;
+}
+
+/* Рядки таблиці */
+.declarants-table tbody tr {
+    background: linear-gradient(90deg, #006699, #0099cc);
+    box-shadow: 0 2px 6px rgba(0, 43, 30, 0.8);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Підсвічування при наведенні */
+.declarants-table tbody tr:hover {
+    background: linear-gradient(90deg, #1de9b6, #00bfa5);
+    color: #00331a;
+}
+
+/* Комірки */
+.declarants-table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    text-align: left;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.details-link {
+    color: #00ff99;
+    font-weight: 700;
+    font-size: 18px;
+    text-decoration: none;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background-color: rgba(0, 255, 153, 0.25);
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.details-link:hover {
+    color: #66ffcc;
+    background-color: rgba(0, 255, 153, 0.4);
+}
+
+.declarants-table .no-data {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    font-style: italic;
+    color: #003300 !important;
+}
+
+/* колонки які мають завжди показувати повний текст */
+.declarants-table td.shrink-to-fit {
+    white-space: nowrap;
+    text-overflow: clip;
+    overflow: visible;
 }
