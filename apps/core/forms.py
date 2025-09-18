@@ -9,6 +9,7 @@ class DeclarantForm(forms.ModelForm):
         # 1
         fields = '__all__'
         exclude = ['created_at', 'updated_at', 'owner', 'user_declarant_id', 'api_id']
+
         # 2
         # fields = ['']
         # widgets = {
