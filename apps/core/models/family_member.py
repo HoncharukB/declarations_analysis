@@ -291,9 +291,9 @@ class FamilyMember(models.Model):
     # Звичайні поля
     subjectRelation = models.CharField(max_length=100, choices=SubjectRelationType.choices, null=True, blank=True)
     citizenship = models.PositiveSmallIntegerField( choices=CitizenshipType.choices, null=True, blank=True)
-    surname = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    patronymic = models.CharField(max_length=100, null=True, blank=True)
+    lastname = models.CharField(max_length=100)
+    firstname = models.CharField(max_length=100)
+    middlename = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=255) # область
     city = models.CharField(max_length=255) # населений пункт
 
@@ -315,8 +315,8 @@ class FamilyMember(models.Model):
         else:
             citizenship = "Невідоме громадянство"
 
-        patronymic = f" {self.patronymic}" if self.patronymic else ""
+        middlename = f" {self.middlename}" if self.middlename else ""
         region = f", регіон: {self.region}" if self.region else ""
         city = f", місто: {self.city}" if self.city else ""
 
-        return f"{relation}: {self.surname} {self.name}{patronymic} ({citizenship}){region}{city}"
+        return f"{relation}: {self.lastname} {self.firstname}{middlename} ({citizenship}){region}{city}"

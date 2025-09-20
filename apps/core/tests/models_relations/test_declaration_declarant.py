@@ -22,11 +22,12 @@ class DeclarationModelTests(unittest.TestCase):
         self.declarant_data = {
             'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
-            'surname': 'Petrenko',
-            'name': 'Vasyl',
-            'patronymic': 'Ivanovich',
+            'lastname': 'Petrenko',
+            'firstname': 'Vasyl',
+            'middlename': 'Ivanovich',
             'work_place': 'IT Step',
             'work_post': 'Developer',
+            'actual_country': 1,
             'owner': self.owner,
         }
         # Створення об'єкту, запис об'єкта в таблицю бази даних, присвоєння id об'єкту

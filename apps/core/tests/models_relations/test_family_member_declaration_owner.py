@@ -21,11 +21,12 @@ class FamilyMemberModelTests(unittest.TestCase):
         self.declarant_data = {
             'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
-            'surname': 'Petrenko',
-            'name': 'Vasyl',
-            'patronymic': 'Ivanovich',
+            'lastname': 'Petrenko',
+            'firstname': 'Vasyl',
+            'middlename': 'Ivanovich',
             'work_place': 'IT Step',
             'work_post': 'Developer',
+            'actual_country': 1,
             'owner': self.owner,
         }
         self.declarant = Declarant.objects.create(**self.declarant_data)
@@ -52,9 +53,9 @@ class FamilyMemberModelTests(unittest.TestCase):
         self.family_member_data = {
             'api_id': uuid.uuid4(),
             'subjectRelation': 'рідний брат',
-            'surname': 'Ivanov',
-            'name': 'Ivan',
-            'patronymic': 'Ivanovich',
+            'lastname': 'Ivanov',
+            'firstname': 'Ivan',
+            'middlename': 'Ivanovich',
             'region': 'Kyiv',
             'city': 'Kyiv',
             'owner': self.owner,
@@ -66,17 +67,17 @@ class FamilyMemberModelTests(unittest.TestCase):
     def test_create_family_member(self):
         fm = FamilyMember.objects.get(id=self.family_member.id)
         print(fm)
-        self.assertEqual(fm.surname, 'Ivanov')
+        self.assertEqual(fm.lastname, 'Ivanov')
         self.assertEqual(fm.owner.id, self.owner.id)
         decl_ids = set(fm.declarations.values_list('id', flat=True))
         self.assertIn(self.declaration_1.id, decl_ids)
         self.assertIn(self.declaration_2.id, decl_ids)
 
     def test_update_family_member(self):
-        self.family_member.name = 'Petro'
+        self.family_member.firstname = 'Petro'
         self.family_member.save()
         updated = FamilyMember.objects.get(id=self.family_member.id)
-        self.assertEqual(updated.name, 'Petro')
+        self.assertEqual(updated.firstname, 'Petro')
 
     def test_delete_family_member(self):
         fm_id = self.family_member.id

@@ -5,17 +5,17 @@ from apps.core.models.validators.validators import validate_no_digits
 
 
 class DeclarantForm(forms.ModelForm):
-    surname = forms.CharField(
+    lastname = forms.CharField(
         label="Прізвище",
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Прізвище'}),
         validators=[validate_no_digits]
     )
-    name = forms.CharField(
+    firstname = forms.CharField(
         label="Ім'я",
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Ім'я"}),
         validators=[validate_no_digits]
     )
-    patronymic = forms.CharField(
+    middlename = forms.CharField(
         label="По батькові",
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'По батькові'}),
@@ -37,9 +37,6 @@ class DeclarantForm(forms.ModelForm):
             'public_person': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
-            'surname': 'Прізвище',
-            'name': "Ім'я",
-            'patronymic': 'По батькові',
             'region': 'Населений пункт',
             'work_place': 'Найменування місця роботи або проходження служби (або місця майбутньої роботи чи '
                           'проходження служби для кандидатів)',

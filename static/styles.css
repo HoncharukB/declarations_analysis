@@ -213,11 +213,10 @@ footer p {
     max-width: 48%;
 }
 
-.declarant-form input[name="surname"],
-.declarant-form input[name="name"],
-.declarant-form input[name="patronymic"] {
-    flex: 1 1 33%;
-    max-width: 31.5%;
+.declarant-form input[name="lastname"],
+.declarant-form input[name="firstname"],
+.declarant-form input[name="middlename"] {
+    flex: 1;
 }
 
 .declarant-form select:not([name="actual_country"]) {

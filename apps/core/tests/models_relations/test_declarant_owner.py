@@ -23,11 +23,12 @@ class DeclarantModelTest(unittest.TestCase):
         self.declarant_data = {
             'user_declarant_id': user_declarant_id,
             'api_id': uuid.uuid4(),
-            'surname': 'Petrenko',
-            'name': 'Vasyl',
-            'patronymic': 'Ivanovich',
+            'lastname': 'Petrenko',
+            'firstname': 'Vasyl',
+            'middlename': 'Ivanovich',
             'work_place': 'IT Step',
             'work_post': 'Developer',
+            'actual_country': 1,
             'owner': self.owner,
         }
         # Створення об'єкту, запис об'єкта в таблицю бази даних, присвоєння id об'єкту
@@ -39,23 +40,23 @@ class DeclarantModelTest(unittest.TestCase):
         declarant = Declarant.objects.get(id=self.declarant.id)
         print(declarant)
         # Перевірка даних
-        self.assertEqual(declarant.surname, self.declarant_data['surname'])
+        self.assertEqual(declarant.lastname, self.declarant_data['lastname'])
         self.assertEqual(declarant.owner.id, self.owner.id)
-        self.assertEqual(declarant.name, self.declarant_data['name'])
-        self.assertEqual(declarant.patronymic, self.declarant_data['patronymic'])
+        self.assertEqual(declarant.firstname, self.declarant_data['firstname'])
+        self.assertEqual(declarant.middlename, self.declarant_data['middlename'])
         self.assertEqual(declarant.work_place, self.declarant_data['work_place'])
         self.assertEqual(declarant.work_post, self.declarant_data['work_post'])
 
     def test_update_declarant(self):
-        self.declarant.surname = "Ivanenko"
-        self.declarant.name = "Petro"
+        self.declarant.lastname = "Ivanenko"
+        self.declarant.firstname = "Petro"
         #...
         #Збереження даних існуючого клієнта
         self.declarant.save()
 
         updated_declarant = Declarant.objects.get(id=self.declarant.id)
-        self.assertEqual(updated_declarant.surname, "Ivanenko")
-        self.assertEqual(updated_declarant.name, "Petro")
+        self.assertEqual(updated_declarant.lastname, "Ivanenko")
+        self.assertEqual(updated_declarant.firstname, "Petro")
         #...
 
     def test_delete_declarant(self):

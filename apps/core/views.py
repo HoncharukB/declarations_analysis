@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 from apps.core.forms import DeclarantForm
 from apps.core.models import Declarant
 from apps.core.models.declarant import CountryDeclarant, ResponsiblePositionType, CorruptionAffectedType, PublicPersonType
+from apps.core.services.declarants_api import DeclarationsService
 
 
 # Create your views here.
@@ -25,9 +26,9 @@ def welcome_view(request):
 def declarants_view(request):
     # POST
     if request.method == "POST":
-        surname = request.POST.get("surname")
-        name = request.POST.get("name")
-        patronymic = request.POST.get("patronymic")
+        lastname = request.POST.get("lastname")
+        firstname = request.POST.get("firstname")
+        middlename = request.POST.get("middlename")
         work_place = request.POST.get("work_place")
         work_post = request.POST.get("work_post")
         region = request.POST.get("region")
@@ -38,9 +39,9 @@ def declarants_view(request):
         # Тут можна додати валідацію даних
         # Запис в базу даних
         Declarant.objects.create(
-            surname=surname,
-            name=name,
-            patronymic=patronymic,
+            lastname=lastname,
+            firstname=firstname,
+            middlename=middlename,
             work_place=work_place,
             work_post=work_post,
             region=region,
@@ -62,6 +63,24 @@ def declarants_view(request):
     }
     return render(request, 'core/pages/declarants.html', context)
 
+
+def declarants_search_view(request):
+    results = []
+    count = 0
+    query = {"lastname": "", "firstname": "", "middlename": ""}
+
+    if request.method == "POST":
+        query["lastname"] = request.POST.get("lastname", "").strip()
+        query["firstname"] = request.POST.get("firstname", "").strip()
+        query["middlename"] = request.POST.get("middlename", "").strip()
+
+        results, count = DeclarationsService.find_declarant(
+            lastname=query["lastname"],
+            firstname=query["firstname"],
+            middlename=query["middlename"],
+        )
+
+    return render(request, 'core/pages/declarants_search.html',{"results": results, "query": query, "count": count})
 
 class DeclarantDetailUpdateView(View):
     model = Declarant

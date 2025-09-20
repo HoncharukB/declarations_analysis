@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Пошук декларантів{% endblock %}
+{% block content %}
+<div class="search-container">
+    <h2>Пошук декларантів через API НАЗК</h2>
+
+    <form method="post" class="search-form">
+        {% csrf_token %}
+        <input type="text" name="lastname" value="{{ query.lastname }}" placeholder="Прізвище" required>
+        <input type="text" name="firstname" value="{{ query.firstname }}" placeholder="Ім'я">
+        <input type="text" name="middlename" value="{{ query.middlename }}" placeholder="По батькові">
+        <button type="submit">🔍 Пошук</button>
+    </form>
+
+    {% if results %}
+        <h3>Результати пошуку – знайдено {{ count }}</h3>
+
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tr>
+                <th>Прізвище</th>
+                <th>Ім’я</th>
+                <th>По батькові</th>
+                <th>ID декларанта</th>
+            </tr>
+            {% for r in results %}
+            <tr>
+                <td>{{ r.lastname }}</td>
+                <td>{{ r.firstname }}</td>
+                <td>{{ r.middlename }}</td>
+                <td>{{ r.user_declarant_id }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% elif query.lastname %}
+        <p>Нічого не знайдено.</p>
+    {% endif %}
+</div>
+{% endblock content %}

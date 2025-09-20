@@ -7,9 +7,9 @@
         {% csrf_token %}
         <h3>Особисті дані</h3>
         <div class="form-row">
-            <input type="text" name="surname" placeholder="Прізвище" required>
-            <input type="text" name="name" placeholder="Ім'я" required>
-            <input type="text" name="patronymic" placeholder="По батькові" required>
+            <input type="text" name="lastname" placeholder="Прізвище" required>
+            <input type="text" name="firstname" placeholder="Ім'я" required>
+            <input type="text" name="middlename" placeholder="По батькові" required>
         </div>
         <h3>Місце фактичного проживання</h3>
         <div class="form-row">
@@ -80,9 +80,9 @@
             <tbody>
                 {% for declarant in declarants_list %}
                 <tr>
-                    <td class="shrink-to-fit">{{ declarant.surname }}</td>
-                    <td class="shrink-to-fit">{{ declarant.name }}</td>
-                    <td class="shrink-to-fit">{{ declarant.patronymic }}</td>
+                    <td class="shrink-to-fit">{{ declarant.lastname }}</td>
+                    <td class="shrink-to-fit">{{ declarant.firstname }}</td>
+                    <td class="shrink-to-fit">{{ declarant.middlename }}</td>
                     <td> {{ declarant.work_place }}</td>
                     <td> {{ declarant.work_post }}</td>
                     <td class="shrink-to-fit">{{ declarant.region }}</td>

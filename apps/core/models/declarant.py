@@ -517,9 +517,9 @@ class Declarant(models.Model):
     user_declarant_id = models.PositiveBigIntegerField(null=True, blank=True)
     api_id = models.UUIDField(null=True, blank=True)
     # Звичайні поля
-    surname = models.CharField(max_length=100, blank=False)
-    name = models.CharField(max_length=100, blank=False)
-    patronymic = models.CharField(max_length=100, null=False, blank=False)
+    lastname = models.CharField(max_length=100, blank=False)
+    firstname = models.CharField(max_length=100, blank=False)
+    middlename = models.CharField(max_length=100, null=False, blank=False)
     work_place = models.CharField(max_length=255, null=False, blank=False)
     work_post = models.CharField(max_length=255, null=False, blank=False)
     actual_country = models.PositiveSmallIntegerField(choices=CountryDeclarant.choices, null=False, blank=False)
@@ -534,9 +534,25 @@ class Declarant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+    # Метод для порівняння, щоб отримати унікальний набір об'єктів
+    def __eq__(self, other):
+        if not isinstance(other, Declarant):
+            return False
+        return (
+                self.lastname == other.lastname and
+                self.firstname == other.firstname and
+                self.middlename == other.middlename and
+                self.user_declarant_id == other.user_declarant_id
+        )
+
+    # Метод для порівняння, щоб отримати унікальний набір об'єктів
+    def __hash__(self):
+        return hash((self.lastname, self.firstname, self.middlename, self.user_declarant_id))
+
     def __str__(self):
         parts = [
-            f"Декларант: {self.surname or ''} {self.name or ''} {self.patronymic or ''}".strip(),
+            f"Декларант: {self.lastname or ''} {self.firstname or ''} {self.middlename or ''}".strip(),
             f"Посада: {self.work_post or 'не вказано'}",
             f"Місце роботи: {self.work_place or 'не вказано'}",
             f"Країна: {self.get_actual_country_display() if hasattr(self, 'get_actual_country_display') and self.actual_country else 'не вказано'}",
