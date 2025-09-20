@@ -70,15 +70,19 @@ class DeclarantDetailUpdateView(View):
         declarant = get_object_or_404(Declarant, pk=pk)
         declarant_form = DeclarantForm(instance=declarant)
         return render(request, 'core/pages/declarant_detail.html', {'declarant_form': declarant_form})
+
     def post(self, request, pk):
         declarant = get_object_or_404(Declarant, pk=pk)
         declarant_form = DeclarantForm(request.POST, instance=declarant)
         if 'submit_declarant' in request.POST:
             if declarant_form.is_valid():
                 declarant_form.save()
+                # Перезавантаження сторінки з актуальними даними із бази даних
                 return redirect("declarant_detail", pk=pk)
-            else:
-                print(declarant_form.errors)
-                return HttpResponse(declarant_form.errors.as_ul(), content_type="text/html")
-        else:
-            return redirect("declarant_detail", pk=pk)
+            # else:
+            #     print(declarant_form.errors)
+            #     return HttpResponse(declarant_form.errors.as_ul(), content_type="text/html")
+        # else:
+        #     return redirect("declarant_detail", pk=pk)
+        # Якщо форма невалідна, повертаємо той самий шаблон з формою та помилками
+        return render(request, 'core/pages/declarant_detail.html', {'declarant_form': declarant_form})

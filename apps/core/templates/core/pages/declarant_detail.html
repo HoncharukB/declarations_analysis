@@ -1,12 +1,35 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Declarant Detail{% endblock %}
+{% block title %}Детальна інформація про декларанта{% endblock %}
 {% block content %}
-    <div>
-        <form method="post" enctype="multipart/form-data" id="declarant-detail-form">
-            {% csrf_token %}
-            {{ declarant_form.as_table }}
-            <button type="submit" name="submit_declarant">Save</button>
-        </form>
-    </div>
+<div class="detail-container">
+    <a href="{% url 'declarants' %}" class="detail-back-btn">⬅ Повернутися до декларантів</a>
+
+    <h2 class="detail-title">Детальна інформація про декларанта</h2>
+
+    <form method="post" enctype="multipart/form-data" id="declarant-detail-form" class="detail-form">
+        {% csrf_token %}
+        <div class="detail-form-wrapper">
+            {{ declarant_form.non_field_errors }}
+
+            {% for field in declarant_form %}
+                <div class="detail-form-row">
+                    <label for="{{ field.id_for_label }}" class="detail-label">{{ field.label }}:</label>
+                    <div class="detail-input">
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="detail-error">{{ field.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="detail-actions">
+            <button type="submit" name="submit_declarant" class="detail-save-btn">
+                💾 Зберегти
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock content %}

@@ -517,16 +517,17 @@ class Declarant(models.Model):
     user_declarant_id = models.PositiveBigIntegerField(null=True, blank=True)
     api_id = models.UUIDField(null=True, blank=True)
     # Звичайні поля
-    surname = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    patronymic = models.CharField(max_length=100, null=True, blank=True)
-    work_place = models.CharField(max_length=255, null=True, blank=True)
-    work_post = models.CharField(max_length=255, null=True, blank=True)
-    responsible_position = models.CharField(choices=ResponsiblePositionType.choices, max_length=550, null=True, blank=True)
-    corruption_affected = models.CharField(choices=CorruptionAffectedType.choices, max_length=550, null=True, blank=True)
-    public_person = models.CharField(choices=PublicPersonType.choices, max_length=550, null=True, blank=True)
-    actual_country = models.PositiveSmallIntegerField(choices=CountryDeclarant.choices, null=True, blank=True)
-    region = models.CharField(max_length=255, null=True, blank=True)
+    surname = models.CharField(max_length=100, blank=False)
+    name = models.CharField(max_length=100, blank=False)
+    patronymic = models.CharField(max_length=100, null=False, blank=False)
+    work_place = models.CharField(max_length=255, null=False, blank=False)
+    work_post = models.CharField(max_length=255, null=False, blank=False)
+    actual_country = models.PositiveSmallIntegerField(choices=CountryDeclarant.choices, null=False, blank=False)
+    region = models.CharField(max_length=255, null=False, blank=False)
+    responsible_position = models.CharField(choices=ResponsiblePositionType.choices, max_length=550, null=False, blank=False)
+    corruption_affected = models.CharField(choices=CorruptionAffectedType.choices, max_length=550, null=False, blank=False)
+    public_person = models.CharField(choices=PublicPersonType.choices, max_length=550, null=False, blank=False)
+
     # Зв'язки
     owner = models.OneToOneField("Owner", on_delete=models.CASCADE, related_name="declarant", null=True, blank=True)
     # Метадані

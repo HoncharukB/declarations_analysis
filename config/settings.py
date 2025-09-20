@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.core',
+    'django_cleanup.apps.CleanupConfig',
     'apps.users',
 ]
 
