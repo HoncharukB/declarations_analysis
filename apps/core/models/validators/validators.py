@@ -47,6 +47,8 @@ def validate_owner_fields(instance):
         raise ValidationError(errors)
 
 
+
+# ----------------declarant_detail-------------------
 def validate_no_digits(value):
     if any(char.isdigit() for char in value):
         raise ValidationError("Поле не може містити цифри.")

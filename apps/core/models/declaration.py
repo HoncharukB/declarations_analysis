@@ -7,10 +7,16 @@ class DeclarationType(models.IntegerChoices):
     AFTER_DISMISSAL = 3, "При звільненні"
     CANDIDATE = 4, "Кандидата на посаду"
 
+class DocumentType(models.IntegerChoices):
+    DECLARATION = 1, "Декларація"
+    SIGNIFICANT_CHANGES = 2, "Повідомлення про суттєві зміни в майновому стані"
+    DECLARATION_CORRECTED = 3, "Виправлена декларація"
+
 class Declaration(models.Model):
     # Id
     document_id = models.UUIDField()
     # Звичайні поля
+    document_type = models.PositiveSmallIntegerField(choices=DocumentType.choices)
     declaration_year = models.PositiveSmallIntegerField()
     declaration_type = models.PositiveSmallIntegerField(choices=DeclarationType.choices)
     declaration_period = models.CharField(max_length=100, null=True, blank=True)

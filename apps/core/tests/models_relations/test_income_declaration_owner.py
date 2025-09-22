@@ -42,6 +42,7 @@ class IncomeModelTests(unittest.TestCase):
 
         self.declaration_data_1 = {
             'document_id': uuid.uuid4(),
+            'document_type': 1,
             'declaration_year': 2023,
             'declaration_type': 1,
             'date': date.today(),
@@ -49,6 +50,7 @@ class IncomeModelTests(unittest.TestCase):
         }
         self.declaration_data_2 = {
             'document_id': uuid.uuid4(),
+            'document_type': 1,
             'declaration_year': 2024,
             'declaration_type': 2,
             'date': date.today(),

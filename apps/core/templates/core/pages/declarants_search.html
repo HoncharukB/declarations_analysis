@@ -5,35 +5,118 @@
 <div class="search-container">
     <h2>Пошук декларантів через API НАЗК</h2>
 
+    <!-- Пошук за ПІБ -->
     <form method="post" class="search-form">
         {% csrf_token %}
-        <input type="text" name="lastname" value="{{ query.lastname }}" placeholder="Прізвище" required>
-        <input type="text" name="firstname" value="{{ query.firstname }}" placeholder="Ім'я">
-        <input type="text" name="middlename" value="{{ query.middlename }}" placeholder="По батькові">
-        <button type="submit">🔍 Пошук</button>
+        <input type="hidden" name="search_type" value="name">
+        <input type="text" name="lastname" placeholder="Прізвище">
+        <input type="text" name="firstname" placeholder="Ім'я">
+        <input type="text" name="middlename" placeholder="По батькові">
+        <button type="submit">🔍 Пошук за ПІБ</button>
+    </form>
+
+    <!-- Пошук за ID -->
+    <form method="post" class="search-form">
+        {% csrf_token %}
+        <input type="hidden" name="search_type" value="id">
+        <input type="text" name="user_declarant_id" placeholder="ID декларанта">
+        <button type="submit">🔍 Пошук за ID</button>
     </form>
 
     {% if results %}
-        <h3>Результати пошуку – знайдено {{ count }}</h3>
+        <h3>
+            Результати пошуку – знайдено {{ count }}
+            {% if count >= 10000 %}
+                <span style="color: #d9534f; font-size: 0.9em;">(обмеження АРІ НАЗК)</span>
+            {% endif %}
+        </h3>
 
-        <table border="1" cellpadding="5" cellspacing="0">
-            <tr>
-                <th>Прізвище</th>
-                <th>Ім’я</th>
-                <th>По батькові</th>
-                <th>ID декларанта</th>
-            </tr>
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="?page=1{% if pagination_querystring %}&{{ pagination_querystring }}{% endif %}">⏮ Перша</a>
+            {% endif %}
+
+            {% if page|add:-10 > 0 %}
+                <a href="?page={{ page|add:-10 }}{% if pagination_querystring %}&{{ pagination_querystring }}{% endif %}">⏪ -10</a>
+            {% endif %}
+
+            {% if page > 1 %}
+                <a href="?page={{ page|add:-1 }}{% if pagination_querystring %}&{{ pagination_querystring }}{% endif %}">⬅ Попередня</a>
+            {% endif %}
+
+            <span>Сторінка {{ page }} з {{ total_pages }}</span>
+
+            {% if page < total_pages %}
+                <a href="?page={{ page|add:1 }}{% if pagination_querystring %}&{{ pagination_querystring }}{% endif %}">Наступна ➡</a>
+            {% endif %}
+
+            {% if page|add:10 <= total_pages %}
+                <a href="?page={{ page|add:10 }}{% if pagination_querystring %}&{{ pagination_querystring }}{% endif %}">+10 ⏩</a>
+            {% endif %}
+
+            {% if page < total_pages %}
+                <a href="?page={{ total_pages }}{% if pagination_querystring %}&{{ pagination_querystring }}{% endif %}">Остання ⏭</a>
+            {% endif %}
+        </div>
+
+        {% endif %}
+
+        <div class="search-cards-grid">
             {% for r in results %}
-            <tr>
-                <td>{{ r.lastname }}</td>
-                <td>{{ r.firstname }}</td>
-                <td>{{ r.middlename }}</td>
-                <td>{{ r.user_declarant_id }}</td>
-            </tr>
+            <div class="search-card">
+                <h4>
+                    {{ r.lastname }} {{ r.firstname }} {{ r.middlename }}
+                </h4>
+                <p>
+                    <b>ID декларанта:</b>
+                    <span class="id-text">{{ r.user_declarant_id }}</span>
+                </p>
+
+                <p>
+                    <b>Дата та час подання:</b>
+                    <span class="date-text">{{ r.date }}</span>
+                </p>
+
+                <p>
+                    📑 <span class="doc-type">{{ r.document_type_display }}</span>
+                    {% if r.declaration_type_display %}
+                        (<span class="decl-type">{{ r.declaration_type_display }}</span>)
+                    {% endif %}
+                </p>
+
+                {% if r.declaration_period and r.document_type_display != "Повідомлення про суттєві зміни в майновому стані" and r.document_type_display != "Виправлена декларація" %}
+                    <p>
+                        <b>Звітний період:</b>
+                        <span class="period-text">{{ r.declaration_period }}</span>
+                    </p>
+                {% endif %}
+                <p>
+                    <b>Посада:</b> <span class="work-info">{{ r.work_post }}</span>
+                </p>
+                <p>
+                    <b>Місце роботи:</b> <span class="work-info">{{ r.work_place }}</span>
+                </p>
+
+                <div class="card-actions">
+                    <form method="post" >
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn">
+                            <img src="{% static 'icons/plus3d.png' %}" alt="add">
+                        </button>
+                    </form>
+                </div>
+            </div>
             {% endfor %}
-        </table>
-    {% elif query.lastname %}
-        <p>Нічого не знайдено.</p>
+        </div>
+    {% elif empty_name_search %}
+    <div class="search-message error">Для пошуку декларантів потрібно ввести дані хоча б у одне з полів ПІБ</div>
+    {% elif empty_id_search %}
+        <div class="search-message error">Поле ID декларанта не може бути порожнім</div>
+    {% elif query.lastname or query.firstname or query.middlename or query.user_declarant_id %}
+        {% if not results %}
+            <div class="search-message warning">Нічого не знайдено!</div>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock content %}

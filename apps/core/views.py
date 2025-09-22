@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.decorators.http import require_http_methods
+from urllib.parse import urlencode
 
 from apps.core.forms import DeclarantForm
 from apps.core.models import Declarant
@@ -65,22 +66,91 @@ def declarants_view(request):
 
 
 def declarants_search_view(request):
-    results = []
-    count = 0
-    query = {"lastname": "", "firstname": "", "middlename": ""}
+    query = {
+        "lastname": request.GET.get("lastname", "").strip(),
+        "firstname": request.GET.get("firstname", "").strip(),
+        "middlename": request.GET.get("middlename", "").strip(),
+        "user_declarant_id": request.GET.get("user_declarant_id", "").strip(),
+    }
+
+    page = int(request.GET.get("page", 1))   # сторінка з URL
+    per_page = 100                            # скільки показувати на сторінці
 
     if request.method == "POST":
-        query["lastname"] = request.POST.get("lastname", "").strip()
-        query["firstname"] = request.POST.get("firstname", "").strip()
-        query["middlename"] = request.POST.get("middlename", "").strip()
+        search_type = request.POST.get("search_type")
 
-        results, count = DeclarationsService.find_declarant(
-            lastname=query["lastname"],
-            firstname=query["firstname"],
-            middlename=query["middlename"],
-        )
+        if search_type == "name":
+            lastname = request.POST.get("lastname", "").strip()
+            firstname = request.POST.get("firstname", "").strip()
+            middlename = request.POST.get("middlename", "").strip()
 
-    return render(request, 'core/pages/declarants_search.html',{"results": results, "query": query, "count": count})
+            if not (lastname or firstname or middlename):
+                return render(request, 'core/pages/declarants_search.html', {
+                    "query": query,
+                    "empty_name_search": True,  # прапорець
+                })
+
+            params = {}
+            if lastname:
+                params["lastname"] = lastname
+            if firstname:
+                params["firstname"] = firstname
+            if middlename:
+                params["middlename"] = middlename
+
+            query_string = urlencode(params)
+            return redirect(f"{request.path}?{query_string}")
+
+        elif search_type == "id":
+            user_declarant_id = request.POST.get("user_declarant_id", "").strip()
+            if not user_declarant_id:
+                return render(request, 'core/pages/declarants_search.html', {
+                    "query": query,
+                    "empty_id_search": True,  # прапорець
+                })
+            return redirect(f"{request.path}?user_declarant_id={user_declarant_id}")
+
+        # скидаємо на першу сторінку при новому пошуку
+        page = 1
+
+    # --- якщо ніяких параметрів немає → пошук не виконуємо ---
+    if not (query["lastname"] or query["firstname"] or query["middlename"] or query["user_declarant_id"]):
+        return render(request, 'core/pages/declarants_search.html', {
+            "results": [],
+            "query": query,
+            "count": 0,
+            "page": 1,
+            "total_pages": 0
+        })
+
+    results, count = DeclarationsService.find_declarant(
+        lastname=query["lastname"],
+        firstname=query["firstname"],
+        middlename=query["middlename"],
+        user_declarant_id=query["user_declarant_id"],
+        page=page,
+        per_page=per_page
+    )
+
+    # рахуємо кількість сторінок
+    total_pages = (count + per_page - 1) // per_page
+
+    # обмежуємо номер сторінки (щоб не виліз за межі)
+    if page > total_pages:
+        page = total_pages if total_pages > 0 else 1
+
+    pagination_query = {k: v for k, v in request.GET.items() if k != "page"}
+    pagination_querystring = urlencode(pagination_query)
+
+    return render(request, 'core/pages/declarants_search.html', {
+        "results": results,
+        "query": query,
+        "count": count,
+        "page": page,
+        "total_pages": total_pages,
+        "pagination_querystring": pagination_querystring
+    })
+
 
 class DeclarantDetailUpdateView(View):
     model = Declarant
