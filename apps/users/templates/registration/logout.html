@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Вихід{% endblock %}
+{% block content %}
+<div class="auth-card">
+    <h3>Ви успішно вийшли з профілю</h3>
+    <a href="{% url 'login' %}" class="btn">Увійти знову</a>
+</div>
+{% endblock %}

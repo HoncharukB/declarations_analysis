@@ -515,7 +515,7 @@ class PublicPersonType(models.TextChoices):
 class Declarant(models.Model):
     # Id
     user_declarant_id = models.PositiveBigIntegerField(null=True, blank=True)
-    api_id = models.UUIDField(null=True, blank=True)
+    api_id = models.UUIDField(null=True, blank=True) # можна видалити
     # Звичайні поля
     lastname = models.CharField(max_length=100, blank=False)
     firstname = models.CharField(max_length=100, blank=False)

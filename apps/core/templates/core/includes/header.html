@@ -5,6 +5,22 @@
             <li><a href="{% url 'about' %}">Про проєкт</a></li>
             <li><a href="{% url 'declarants' %}">Декларанти</a></li>
             <li><a href="{% url 'declarants_search' %}">Пошук декларантів</a></li>
+            <li><a href="{% url 'declarations_analysis_page' %}">Аналіз декларацій</a></li>
+            <li><a href="{% url 'users' %}">Користувачі</a></li>
+        </ul>
+        <ul class="nav-right">
+            {% if user.is_authenticated %}
+                <strong>Привіт, {{ user.username }}</strong>
+                <li>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-link">Вийти</button>
+                    </form>
+                </li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Увійти</a></li>
+                <li><a href="{% url 'register' %}">Зареєструватися</a></li>
+            {% endif %}
         </ul>
     </nav>
 </header>

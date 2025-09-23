@@ -15,8 +15,8 @@ class ObjectType(models.TextChoices):
     OTHER = "Інше", "Інше"
 
 class CountryRealEstate(models.IntegerChoices):
-    UKRAINE = 1, "Україна"
     NOT_REGISTERED = -1, "Не зареєстрований"
+    UKRAINE = 1, "Україна"
     AUSTRALIA = 2, "Австралія"
     AUSTRIA = 3, "Австрія"
     AZERBAIJAN = 4, "Азербайджан"

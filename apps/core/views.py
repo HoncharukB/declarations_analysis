@@ -152,6 +152,10 @@ def declarants_search_view(request):
     })
 
 
+def declarations_analysis_view(request):
+    return render(request, 'core/pages/declarations_analysis_page.html', {})
+
+
 class DeclarantDetailUpdateView(View):
     model = Declarant
     def get(self, request, pk):

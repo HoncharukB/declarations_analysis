@@ -6,7 +6,7 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
@@ -31,13 +31,19 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="7489d68b-a153-4b33-8d0a-8ff6a029a302" object-ref="schemas/main/tables/users_customuser" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="7489d68b-a153-4b33-8d0a-8ff6a029a302" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="7489d68b-a153-4b33-8d0a-8ff6a029a302" dataset="main.auth_user" active-filter-id="" />
     <filter-actions connection-id="7489d68b-a153-4b33-8d0a-8ff6a029a302" dataset="main.core_declarant" active-filter-id="" />
+    <filter-actions connection-id="7489d68b-a153-4b33-8d0a-8ff6a029a302" dataset="main.users_customuser" active-filter-id="5ad7c8b9-98a9-4db3-b8ef-6a0736a99873">
+      <filter id="5ad7c8b9-98a9-4db3-b8ef-6a0736a99873" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
@@ -86,7 +92,7 @@
           <session-management value="true" />
           <ddl-file-binding value="true" />
           <database-logging value="true" />
-          <connect-automatically value="true" />
+          <connect-automatically value="false" />
           <restore-workspace value="true" />
           <restore-workspace-deep value="false" />
           <environment-type value="default" />

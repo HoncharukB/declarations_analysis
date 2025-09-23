@@ -50,6 +50,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.core.middleware.login_required.LoginRequiredMiddleware',
+    'apps.core.middleware.login_required.RoleRequiredMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -132,4 +134,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
+]
+
+
+AUTH_USER_MODEL = 'users.CustomUser'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/users/logged-out/'
+
+LOGIN_EXEMPT_URLS = [
+    'registration/logout/'
 ]
