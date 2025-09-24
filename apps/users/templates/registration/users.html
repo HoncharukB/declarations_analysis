@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Користувачі{% endblock %}
+{% block content %}
+<div class="users-container">
+    <h2>Список користувачів</h2>
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>Фото</th>
+                <th>Прізвище</th>
+                <th>Ім’я</th>
+                <th>Логін</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Роль</th>
+                <th>Дія</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    {% if user.photo %}
+                        <img src="{{ user.photo.url }}" alt="{{ user.username }}" class="user-photo">
+                    {% else %}
+                        <img src="{% static 'icons/user.png' %}" alt="no photo" class="user-photo">
+                    {% endif %}
+                </td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone|default:"-" }}</td>
+                <td>
+                    <form method="post" class="role-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <select name="role" class="role-select">
+                            {% for value,label in user.ROLE_CHOICES %}
+                                <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                </td>
+                <td>
+                        <button type="submit" class="role-btn">Змінити</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center;">Немає користувачів</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -14,3 +14,4 @@ class CustomUser(AbstractUser):
     phone = models.CharField(max_length=13, null=True, blank=True)
 
     declarant = models.ManyToManyField("core.Declarant", related_name='customer_users')
+    declarations = models.ManyToManyField("core.Declaration", related_name='customer_users')

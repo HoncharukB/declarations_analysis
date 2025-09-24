@@ -819,3 +819,80 @@ footer p {
 }
 
 /****************************************************************************************/
+
+.users-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(230, 245, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.users-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #003366;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.users-table th, .users-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e6e6e6;
+    text-align: center;
+    font-size: 14px;
+    color: #003366;
+}
+
+.users-table th {
+    background: #f2f6fc;
+    font-weight: bold;
+    color: #003366;
+}
+
+.users-table tr:hover {
+    background: #f9fbff;
+}
+
+.user-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ccc;
+}
+
+.role-form {
+    margin: 0;
+}
+
+.role-select {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+}
+
+.role-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: linear-gradient(to right, #4a90e2, #00c6ff);
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+    font-size: 13px;
+}
+
+.role-btn:hover {
+    background: linear-gradient(to right, #00c6ff, #4a90e2);
+}
+

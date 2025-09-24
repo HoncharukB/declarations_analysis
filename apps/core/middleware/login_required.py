@@ -41,6 +41,8 @@ class RoleRequiredMiddleware:
                 return redirect('welcome')
             elif view_name== 'declarants' and request.user.role == 'guest':
                 return redirect('welcome')
+            elif view_name== 'declarations_analysis_page' and request.user.role == 'guest':
+                return redirect('welcome')
             elif view_name == 'users':
                 if request.user.role == 'user' or request.user.role == 'guest':
                     return redirect('welcome')
