@@ -1,5 +1,9 @@
+import uuid
+
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.views import View
 from django.views.decorators.http import require_http_methods
 from urllib.parse import urlencode
@@ -8,6 +12,17 @@ from apps.core.forms import DeclarantForm
 from apps.core.models import Declarant
 from apps.core.models.declarant import CountryDeclarant, ResponsiblePositionType, CorruptionAffectedType, PublicPersonType
 from apps.core.services.declarants_api import DeclarationsService
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from apps.core.models import Declarant, Declaration
+from apps.users.models import CustomUser, UserDeclaration
+from apps.core.services.declarants_api import DeclarationsService
+from datetime import datetime
+import requests
+
 
 
 # Create your views here.
@@ -142,18 +157,201 @@ def declarants_search_view(request):
     pagination_query = {k: v for k, v in request.GET.items() if k != "page"}
     pagination_querystring = urlencode(pagination_query)
 
+    # ✅ додаємо списки id користувача
+    user_declaration_ids = [str(id) for id in request.user.declarations.values_list("document_id", flat=True)]
+    user_declarant_ids = list(request.user.declarant.values_list("user_declarant_id", flat=True))
+
     return render(request, 'core/pages/declarants_search.html', {
         "results": results,
         "query": query,
         "count": count,
         "page": page,
         "total_pages": total_pages,
-        "pagination_querystring": pagination_querystring
+        "pagination_querystring": pagination_querystring,
+        "user_declaration_ids": user_declaration_ids,
+        "user_declarant_ids": user_declarant_ids,
     })
 
+@login_required
+def add_declaration_view(request):
+    if request.method == "POST":
+        raw_id = request.POST.get("document_id")
+        user = request.user
 
+        # конвертуємо у UUID
+        try:
+            document_id = uuid.UUID(raw_id) if raw_id else None
+        except (ValueError, TypeError):
+            messages.error(request, "Невірний формат document_id.")
+            return redirect("add_declaration")
+
+        if not document_id:
+            messages.error(request, "Порожній document_id.")
+            return redirect("add_declaration")
+
+        # перевіряємо, чи вже є декларація у БД
+        declaration = Declaration.objects.filter(document_id=document_id).first()
+        if not declaration:
+            # завантажуємо JSON з API
+            url = f"https://public-api.nazk.gov.ua/v2/documents/{document_id}"
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+
+            step1 = data.get("data", {}).get("step_1", {}).get("data", {})
+            step0 = data.get("data", {}).get("step_0", {}).get("data", {})
+
+            # шукаємо/створюємо декларанта
+            declarant, _ = Declarant.objects.get_or_create(
+                user_declarant_id=data.get("user_declarant_id"),
+                defaults={
+                    "lastname": step1.get("lastname", ""),
+                    "firstname": step1.get("firstname", ""),
+                    "middlename": step1.get("middlename", ""),
+                    "work_place": step1.get("workPlace", ""),
+                    "work_post": step1.get("workPost", ""),
+                    "region": step1.get("region_txt", ""),
+                    "actual_country": step1.get("actual_country") or 1,
+                    "responsible_position": step1.get("responsiblePosition", ""),
+                    "corruption_affected": step1.get("corruptionAffected", ""),
+                    "public_person": step1.get("public_person", ""),
+                }
+            )
+
+            year = step0.get("declaration_year")
+            period = step0.get("declaration_period")
+
+            # створюємо декларацію
+            declaration = Declaration.objects.create(
+                document_id=document_id,
+                document_type=data.get("type"),
+                declaration_year=int(year) if year else 0,
+                declaration_type=data.get("declaration_type") or 1,
+                declaration_period=period or "",
+                date=datetime.fromisoformat(data.get("date")) if data.get("date") else None,
+                declarant=declarant,
+            )
+
+        # додаємо зв’язок користувача з декларацією
+        user.declarations.add(declaration)
+        referer = request.META.get("HTTP_REFERER", reverse("declarants_search"))
+        return redirect(referer)
+
+
+@login_required
+def add_declarant_view(request):
+    if request.method == "POST":
+        user_declarant_id = request.POST.get("user_declarant_id")
+        user = request.user
+
+        # перевіряємо, чи вже є декларант у БД
+        declarant = Declarant.objects.filter(user_declarant_id=user_declarant_id).first()
+        if not declarant:
+            # витягаємо всі декларації декларанта з API
+            url = f"https://public-api.nazk.gov.ua/v2/documents/list?user_declarant_id={user_declarant_id}"
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+
+            for decl in data.get("data", []):
+                step1 = decl.get("data", {}).get("step_1", {}).get("data", {})
+                step0 = decl.get("data", {}).get("step_0", {}).get("data", {})
+
+                if not declarant:
+                    declarant = Declarant.objects.create(
+                        user_declarant_id=decl.get("user_declarant_id"),
+                        lastname=step1.get("lastname", ""),
+                        firstname=step1.get("firstname", ""),
+                        middlename=step1.get("middlename", ""),
+                        work_place=step1.get("workPlace", ""),
+                        work_post=step1.get("workPost", ""),
+                        region="",
+                        actual_country=1,
+                        responsible_position="",
+                        corruption_affected="",
+                        public_person="",
+                    )
+
+                # Формуємо коректний звітний період
+                year = step0.get("declaration_year")
+                period = step0.get("declaration_period")
+
+                # додаємо декларації
+                declaration, _ = Declaration.objects.get_or_create(
+                    document_id=decl.get("id"),
+                    defaults={
+                        "document_type": decl.get("type"),
+                        "declaration_year": int(year) if year and str(year).isdigit() else 0,
+                        "declaration_type": decl.get("declaration_type") or 1,
+                        "declaration_period": period or "",
+                        "date": datetime.fromisoformat(decl.get("date")) if decl.get("date") else None,
+                        "declarant": declarant,
+                    }
+                )
+
+        # додаємо зв’язок користувача з декларантом
+        user.declarant.add(declarant)
+        referer = request.META.get("HTTP_REFERER", reverse("declarants_search"))
+        return redirect(referer)
+
+
+@login_required
 def declarations_analysis_view(request):
-    return render(request, 'core/pages/declarations_analysis_page.html', {})
+    # Сортуємо декларації за спаданням дати подання
+    user_declarations_queryset = (
+        UserDeclaration.objects
+        .filter(user=request.user)
+        .select_related("declaration__declarant")
+        .order_by("-added_at")
+    )
+
+    declarations_list = []
+    for ud in user_declarations_queryset:
+        d = ud.declaration
+        date_str = d.date.strftime("%d.%m.%Y") if d.date else ""
+        declarations_list.append({
+            "lastname": d.declarant.lastname,
+            "firstname": d.declarant.firstname,
+            "middlename": d.declarant.middlename,
+            "user_declarant_id": d.declarant.user_declarant_id,
+            "document_type_display": d.get_document_type_display(),
+            "declaration_type_display": d.get_declaration_type_display(),
+            "date": date_str,
+            "work_post": d.declarant.work_post,
+            "work_place": d.declarant.work_place,
+        })
+
+    # Сортуємо декларантів за спаданням id (можна замінити на created_at, якщо є)
+    declarants_queryset = request.user.declarant.order_by('-id')
+
+    declarants_list = []
+    for dec in declarants_queryset:
+        decls = []
+        # Декларації кожного декларанта теж сортуємо за спаданням дати
+        for d in dec.declarations.order_by('-date', '-id'):
+            date_str = d.date.strftime("%d.%m.%Y") if d.date else ""
+            decls.append({
+                "date": date_str,
+                "document_id": str(d.document_id),
+                "document_type_display": d.get_document_type_display(),
+                "declaration_type_display": d.get_declaration_type_display(),
+                "work_post": d.declarant.work_post,
+                "work_place": d.declarant.work_place,
+            })
+        declarants_list.append({
+            "lastname": dec.lastname,
+            "firstname": dec.firstname,
+            "middlename": dec.middlename,
+            "user_declarant_id": dec.user_declarant_id,
+            "declarations_count": dec.declarations.count(),
+            "declarations": decls,
+        })
+
+    return render(request, 'core/pages/declarations_analysis_page.html', {
+        "declarations_list": declarations_list,
+        "declarants_list": declarants_list,
+    })
+
 
 
 class DeclarantDetailUpdateView(View):

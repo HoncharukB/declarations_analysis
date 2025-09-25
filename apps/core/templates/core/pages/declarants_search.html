@@ -99,13 +99,31 @@
                 </p>
 
                 <div class="card-actions">
-                    <form method="post" >
+                    <form method="post" action="{% url 'add_declaration' %}">
                         {% csrf_token %}
+                        <input type="hidden" name="document_id" value="{{ r.document_id }}">
                         <button type="submit" class="action-btn">
+                        {% if r.document_id in user_declaration_ids %}
+                            <img src="{% static 'icons/okey_dec.png' %}" alt="added">
+                        {% else %}
                             <img src="{% static 'icons/plus3d.png' %}" alt="add">
+                        {% endif %}
+                        </button>
+                    </form>
+
+                    <form method="post" action="{% url 'add_declarant' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_declarant_id" value="{{ r.user_declarant_id }}">
+                        <button type="submit" class="action-btn">
+                        {% if r.user_declarant_id in user_declarant_ids %}
+                            <img src="{% static 'icons/added_d.png' %}" alt="added">
+                        {% else %}
+                            <img src="{% static 'icons/add_d.png' %}" alt="add">
+                        {% endif %}
                         </button>
                     </form>
                 </div>
+
             </div>
             {% endfor %}
         </div>

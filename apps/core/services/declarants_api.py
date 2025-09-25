@@ -71,6 +71,7 @@ class DeclarationsService:
             display_period = f"{year} ({period})" if period != year else year
 
             results.append({
+                "document_id": declaration.get("id"),
                 "lastname": step1.get("lastname", ""),
                 "firstname": step1.get("firstname", ""),
                 "middlename": step1.get("middlename", ""),

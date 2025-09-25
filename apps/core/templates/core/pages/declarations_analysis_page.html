@@ -1,8 +1,79 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}Аналіз декларацій{% endblock %}
 {% block content %}
-<div>
+<div class="analysis-container">
+
+    <h2>Таблиця декларацій</h2>
+<table class="analysis-table declarations-table">
+        <thead>
+            <tr>
+                <th>ПІБ</th>
+                <th>ID декларанта</th>
+                <th>Інформація про декларацію</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for d in declarations_list %}
+            <tr class="declaration-row">
+                <td>{{ d.lastname }} {{ d.firstname }} {{ d.middlename }}</td>
+                <td>{{ d.user_declarant_id }}</td>
+                <td class="declaration-info">
+                    <p class="analysis-doc-type">
+                        📑 <span class="analysis-doc-type-text">{{ d.document_type_display }}</span>
+                        {% if d.declaration_type_display %}
+                            (<span class="analysis-decl-type">{{ d.declaration_type_display }}</span>)
+                        {% endif %}
+                    </p>
+                    <p><b class="declaration-label">Дата подання:</b> <span class="analysis-date-text">{{ d.date }}</span></p>
+                    <p><b class="declaration-label">Посада:</b> <span class="analysis-work-info">{{ d.work_post|safe }}</span></p>
+                    <p><b class="declaration-label">Місце роботи:</b> <span class="analysis-work-info">{{ d.work_place|safe }}</span></p>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Таблиця декларантів</h2>
+    <table class="analysis-table">
+        <thead>
+            <tr>
+                <th>ПІБ</th>
+                <th>ID декларанта</th>
+                <th>Кількість декларацій</th>
+                <th>Список декларацій</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dec in declarants_list %}
+            <tr class="declarant-row">
+                <td>{{ dec.lastname }} {{ dec.firstname }} {{ dec.middlename }}</td>
+                <td>{{ dec.user_declarant_id }}</td>
+                <td>{{ dec.declarations_count }}</td>
+                <td>
+                    <table class="analysis-subtable">
+                        <tbody>
+                        {% for d in dec.declarations %}
+                            <tr>
+                                <td>
+                                    <p><b class="declaration-label">ID декларації:</b> <code class="analysis-date-text">{{ d.document_id }}</code></p>
+                                    <p><b class="declaration-label">Дата подання:</b> <span class="analysis-date-text">{{ d.date }}</span></p>
+                                    <p class="analysis-doc-type">
+                                        📑 <span class="analysis-doc-type-text">{{ d.document_type_display }}</span>
+                                        {% if d.declaration_type_display %}
+                                            (<span class="analysis-decl-type">{{ d.declaration_type_display }}</span>)
+                                        {% endif %}
+                                    </p>
+                                    <p><b class="declaration-label">Посада:</b> <span class="analysis-work-info">{{ d.work_post }}</span></p>
+                                    <p><b class="declaration-label">Місце роботи:</b> <span class="analysis-work-info">{{ d.work_place }}</span></p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 </div>
-{% endblock content %}
+{% endblock %}

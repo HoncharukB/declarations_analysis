@@ -739,7 +739,10 @@ footer p {
 /* Дії */
 .search-card .card-actions {
     margin-top: 1rem;
-    text-align: right;
+    display: flex;              /* flex-контейнер */
+    justify-content: space-between; /* рівномірний розподіл кнопок */
+    align-items: center;        /* вирівнювання по вертикалі */
+    gap: 10px;                  /* відстань між кнопками */
 }
 
 
@@ -756,7 +759,7 @@ footer p {
 }
 
 .search-card .action-btn img:hover {
-    transform: scale(1.5) rotate(180deg);
+    transform: scale(1.5);
 }
 
 /* ID */
@@ -818,7 +821,7 @@ footer p {
     border: 1px solid #ffd480;
 }
 
-/****************************************************************************************/
+/*****************************стилі для users.html***********************************************************/
 
 .users-container {
     max-width: 1200px;
@@ -896,3 +899,144 @@ footer p {
     background: linear-gradient(to right, #00c6ff, #4a90e2);
 }
 
+
+/*********************************** Стилі для declarations_analysis ***********************************/
+
+/* Контейнер */
+.analysis-container {
+    max-width: 1400px;
+    margin: 2.5rem auto;
+    padding: 2.5rem;
+    background: rgba(230, 245, 255, 0.85);
+    border-radius: 16px;
+    box-shadow: 0 0 28px rgba(0,0,0,0.25);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.analysis-container h2 {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 1.7rem;
+    font-weight: 700;
+    font-size: 1.9rem;
+    border-bottom: 3px solid #e6f0fa;
+    padding-bottom: 8px;
+}
+
+.analysis-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    background: linear-gradient(180deg, #fff, #f9fcff);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+}
+
+.analysis-table th, .analysis-table td {
+    padding: 10px 12px;        /* зменшено відступи */
+    vertical-align: top;
+    text-align: center;
+    font-size: 14px;           /* трохи менший текст */
+    color: #004466;
+    border-bottom: 1px solid #dceefc;
+    font-weight: 600;
+}
+
+.analysis-table th {
+    background-color: #e6f0fa;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.analysis-table tr:hover {
+    background-color: #d6ebff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    transition: background-color 0.25s ease;
+}
+
+/* Вкладена таблиця декларацій декларанта */
+.analysis-subtable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    margin-top: 8px;
+    background: #f0f8ff;
+    border-radius: 8px;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+}
+
+.analysis-subtable td {
+    padding: 6px 8px;         /* зменшено відступи */
+    font-size: 13px;           /* зменшено текст */
+    text-align: left;
+    color: #003366;
+    border-bottom: 1px solid #cee4ff;
+}
+
+/* Зменшення тексту і відступів для полів декларації в таблицях */
+.analysis-table td.declaration-info,
+.analysis-subtable td {
+    font-size: 12px !important;    /* точно менший текст */
+    line-height: 1.25 !important;  /* щільніше по вертикалі */
+}
+
+.analysis-table td .declaration-info p,
+.analysis-subtable td p {
+    margin: 1px 0 !important;      /* мінімальні вертикальні відступи */
+    padding: 0 !important;
+}
+
+
+/* Стилі для полів огляду декларації */
+.analysis-table td.declaration-info .analysis-doc-type,
+.analysis-table td.declaration-info .analysis-date-text,
+.analysis-table td.declaration-info .analysis-period-text,
+.analysis-table td.declaration-info .analysis-decl-type,
+.analysis-table td.declaration-info .analysis-work-info,
+.analysis-subtable td .analysis-doc-type,
+.analysis-subtable td .analysis-date-text,
+.analysis-subtable td .analysis-period-text,
+.analysis-subtable td .analysis-decl-type,
+.analysis-subtable td .analysis-work-info {
+    font-size: 12px !important;  /* менший текст для всіх полів */
+    margin: 1px 0 !important;
+    font-weight: 600;
+}
+
+.analysis-doc-type-text {
+    color: #6f42c1; /* фіолетовий */
+}
+
+.analysis-decl-type {
+    color: #17a2b8; /* бірюзовий */
+}
+
+.analysis-period-text {
+    color: #fd7e14; /* золотистий */
+}
+
+.analysis-work-info {
+    color: #495057;
+    word-break: break-word;     /* забезпечує перенос слів */
+}
+
+/* Зменшення розміру заголовків полів декларації */
+.declaration-label {
+    font-size: 12px;      /* менший розмір тексту */
+    font-weight: 600;
+    margin-right: 4px;    /* відстань до значення */
+    display: inline-block;
+}
+
+.analysis-table.declarations-table td.declaration-info p {
+    margin: 2px 0;      /* маленькі відступи між рядками */
+    padding: 0;
+    line-height: 1.2;   /* щільніше по вертикалі */
+}
+
+.analysis-table.declarations-table td.declaration-info .declaration-label,
+.analysis-table.declarations-table td.declaration-info span {
+    font-size: 12px;    /* зменшений текст */
+}
